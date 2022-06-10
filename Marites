@@ -16,7 +16,7 @@ print('How many players are there?')
 qplayers = int(input())
 print('-------------------------------------------------------------------------------------')
 
-if qplayers <= 0:
+if qplayers <= 1:
     quit()
 
 print('Choose a topic:')
