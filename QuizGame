@@ -1,0 +1,144 @@
+import random
+import time
+import re
+from datetime import datetime as dt
+import signal
+import sys
+from threading import Timer
+
+
+questionsko = ['The more you code, the more of me there is. I may be gone for now but you cant get rid of me forever. What am I?',\
+'Im a language for everything yet I have no real identity of my own. Good luck trying to compile me. What am I?',\
+'As a developer Im your eyes, showing you the result of your code in your language of choice. What am I?',\
+'Im fundamental and used to build larger structures. While youll find many different kinds of me, we all just mess with information in different ways. What am I?',\
+'As a developer, you usually get mad at me because I complain a lot, although Im usually right. What am I?',\
+'Im sent before Im ready, Ill break before you know it and you cant find me many places. What am I?',\
+'Im a simple thing, nothing special. While I have many cousins were all very similar because we set your project up. What am I?',\
+'Im pretty focused so I dont do too much. However whatever you wish is my command. What am I?',\
+'I catch you and your teammates when you fall and I can be you in a pinch. What am I?',\
+'Im your “waiter” for information. What I am?',\
+'I come small, as small as you can get in fact. With many well-thought-out versions of me I bring stability. What am I?',\
+'You make me often and youre always messing with me by pushing and pulling me all the time. Dont you have any manners? What am I?',\
+'Im a shape shifter. You could call me someone who could possess multiple qualities but only has one set of them at any given time. What am I?',\
+'Im a red and black structure and often forgotten about after learned. Although you almost always use a different color of me for Christmas. What am I?',\
+'I have a pulse but no heart, a brain but cant think and while I can sleep, I usually dont stay asleep for long? What am I?']
+answersko = ['Bug', 'Pseudocode', 'Print Statement', 'Data Structure', 'Compiler', 'Beta Release', 'Configuration File', 'Command',\
+'Project Manager', 'Server', 'Unit Test', 'Code', 'Polymorphism', 'A red-black tree', 'CPU']
+
+startnow = True
+while startnow == True:
+
+    listofrandomnum = []
+
+    print('----------------------------------------------------------')
+    print('THINGS TO KEEP IN MIND \n1) Max number of guess depends on the word length.\n2) Answers are not case sensitive.\n3) You have 30 seconds to guess each word. \n\
+4) There are 5 questions for each round. \n- Press enter to proceed to the game.\n- Type anything to exit.')
+    print('----------------------------------------------------------')
+    proceed = str(input())
+
+    if proceed == '':
+        print('Game has started. Good luck!')
+    else:
+        print('Bye bye!')
+        quit()
+    
+    questionscount = len(questionsko) - 1
+    #print(questionscount)
+    #GETS 5 RANDOM NUMBERS
+    #x=0
+    #while x < 5:
+    #    wheel = random.randint(0, questionscount)
+    #    listofrandomnum.append(wheel)
+    #    x+=1
+    listofrandomnum = random.sample(range(0, 14), 5)
+    #print(listofrandomnum)
+    #RETRIEVES QUESTIONS
+    #MAX NUMBER OF GUESSES IS 3 ONLY
+    clueword = ''
+    y=0
+    score=0
+    z=0
+    while y < 5:
+        remaining_time = 30
+        t = Timer(remaining_time, print, "Time's Up! Press enter to continue to the next question.")
+        t.start()
+
+        ctr = listofrandomnum[y]
+        print('----------------------------------------------------------')
+        print('Question No.', y+1, ':', str(questionsko[ctr]))
+        clueword = answersko[ctr]
+        maxguess = len(clueword)
+        vowelcount = 0
+
+        findvowels = clueword.upper()
+        if findvowels.find('A') >=0 :
+            vowelcount +=1
+        if findvowels.find('E') >=0 :
+            vowelcount +=1
+        if findvowels.find('I') >=0 :
+            vowelcount +=1
+        if findvowels.find('O') >=0 :
+            vowelcount +=1
+        if findvowels.find('U') >=0 :
+            vowelcount +=1
+        #print(vowelcount, findvowels)
+        clueword = re.sub(r"[^*]", " _ ", clueword)
+        print('Clue:', clueword)
+
+        maxguess = maxguess - vowelcount
+
+        while maxguess > 0:
+            print('Your maximum number of guesses is:', maxguess)
+            start_time = dt.now()
+            guesses = str(input()).upper()
+
+            if not t.is_alive():
+                print('----------------------------------------------------------')
+                break
+
+            if guesses == str(answersko[ctr].upper()): #and timesupna == False:
+                print('You got it right!')
+                score+=1
+                print('Your current score is:', str(score), 'out of 5')
+                t.cancel()
+                break
+            elif guesses != str(answersko[ctr].upper()): #and timesupna == True:
+
+                maxguess-=1
+                print('Try again.')
+                #print('Your current score is:', str(score), 'out of 5')
+                clueword = answersko[ctr].title()
+                #if maxguess == 2:
+                clueword = re.sub(r"[^aeiouAEIOU]", " _ ", clueword)
+                #elif maxguess == 1:
+                #    clueword = re.sub(r"[^aeiouAEIOUkszgrdrmlthKSZGRDRMLTH]", " _ ", clueword)
+                print('Clue:', clueword)
+                if maxguess == 0:
+                    print('Maximum number of guesses reached.')
+                    print('Correct Answer is:', answersko[ctr].title())
+                    print('Your current score is:', str(score), 'out of 5')
+                    t.cancel()
+                    break
+
+            end_time = dt.now()
+            elapsed_time = end_time - start_time
+            #t.cancel()
+            remaining_time = remaining_time - elapsed_time.seconds
+        
+        y+=1
+
+    if score >=3:
+        print('End of Game. Your total score is', str(score), 'out of 5. You Won!')
+        print('----------------------------------------------------------')
+    else:
+        print('End of Game. Your total score is', str(score), 'out of 5. You lost, dummy!')
+        print('----------------------------------------------------------')
+
+    print('Do you wish to try again? Type yes, otherwise, press any key.')
+    optiontoproceed = str(input()).upper()
+
+    if optiontoproceed == 'YES':
+        startnow = True
+    else:
+        #startnow = False
+        quit()
