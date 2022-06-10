@@ -1,0 +1,167 @@
+import random
+import time
+import re
+from datetime import datetime as dt
+import signal
+import sys
+from threading import Timer
+
+
+categorychoices = ['Marvel Superhero', 'Disney Character', 'Pixar Character', 'Manga Characters']
+marvel = ['CaptainAmerica', 'Thor', 'IronMan', 'AntMan', 'Spiderman', 'Hulk']
+disney = ['TinkerBell', 'Ursula', 'Maleficent', 'Hades', 'CaptainHook', 'Gothel', 'Shere Khan', 'CruelladeVil']
+pixar = ['Syndrome', 'ErnestodelaCruz', 'RandallBoggs', 'Woody', 'Sully', 'CarlFredericksen', 'Ratatouille']
+manga = ['Itachi', 'Kakashi', 'VinsmokeSanji', 'Saitama', 'Killua', 'MonkeyDLuffy', 'Linlin', 'Chopper']
+
+startnow = True
+
+while startnow == True:
+
+    listofrandomnum = []
+
+    print('----------------------------------------------------------')
+    print('THINGS TO KEEP IN MIND \n1) Max number of guess depends on the word length.\n2) Answers are not case sensitive.\n\
+3) You have 30 seconds to guess each word. 4) You can enter multiple characters at once, it will be accepted as long as they are next to each other.\
+\n- Press enter to proceed to the game.\n- Type anything to exit.')
+    print('----------------------------------------------------------')
+    proceed = str(input())
+
+    if proceed == '':
+        print('Game has started. Good luck!')
+    else:
+        print('Bye bye!')
+        quit()
+
+    #CHOOSE CATEGORY
+    print('Choose a category:\n1) Marvel Superhero\n2) Disney Character\n3) Pixar Character\n4) Manga Characters')
+    chosencategory = int(input())
+
+    damingoptions = 0
+
+    if chosencategory == 1:
+        print('Chosen Category is:', categorychoices[0])
+        damingoptions = len(marvel) -1
+    elif chosencategory == 2:
+        print('Chosen Category is:', categorychoices[1])
+        damingoptions = len(disney) -1
+    elif chosencategory == 3:
+        print('Chosen Category is:', categorychoices[2])
+        damingoptions = len(pixar) -1
+    elif chosencategory == 4:
+        print('Chosen Category is:', categorychoices[3])
+        damingoptions = len(manga) -1
+
+    uniquenumbers = ['100']
+    habangunique = 1
+    zz = 0
+    #GETS 5 RANDOM NUMBERS
+    x=0
+    #while x < 5:
+    #wheel = random.sample(range(0, damingoptions), 5)
+    listofrandomnum = random.sample(range(0, damingoptions), 5)
+    #print(listofrandomnum)
+    #listofrandomnum.append(wheel)
+    #    x+=1
+    #print(listofrandomnum)
+
+    #RETRIEVES QUESTIONS
+    #MAX NUMBER OF GUESSES IS 3 ONLY
+    clueword = ''
+    cluewordchecker = ''
+    actualword = ''
+    y=0
+    score=0
+    z=0
+    while y < 5:
+        adder = '*'
+        remaining_time = 30
+        t = Timer(remaining_time, print, "Time's Up! Press enter to continue to the next question.")
+        if actualword != '':
+            print('Correct Answer is:', actualword)
+            print('Your current score is:', str(score), 'out of 5')
+        t.start()
+
+        ctr = listofrandomnum[y]
+        #print(str(categorychoices[ctr]))
+
+        if chosencategory == 1:
+            clueword = marvel[ctr]
+        elif chosencategory == 2:
+            clueword = disney[ctr]
+        elif chosencategory == 3:
+            clueword = pixar[ctr]
+        elif chosencategory == 4:
+            clueword = manga[ctr]
+
+        actualword = clueword
+        maxguess = len(clueword)
+        #print(clueword)
+        
+        clueword = re.sub(r"[^{}]".format(adder), " _ ", clueword)
+        print('----------------------------------------------------------')
+        print('Word No.', y+1, ':', clueword)
+        print('Your maximum number of guesses is', maxguess)
+
+        while maxguess > 0:
+            start_time = dt.now()
+            guesses = str(input()).upper()
+
+            if not t.is_alive():
+                print('----------------------------------------------------------')
+                break
+            
+            maxguess-=1
+
+            if actualword.upper().find(guesses.upper()) >=0 and guesses != '':
+                print('You got a hit!')
+                adder = adder + guesses
+            elif actualword.upper().find(guesses.upper()) <0 or guesses == '':
+                print('Try again.')
+                #print('Your current score is:', str(score), 'out of 5')
+
+            clueword = actualword.upper()
+            clueword = re.sub(r"[^{}]".format(adder.upper()), " _ ", clueword)
+            print('----------------------------------------------------------')
+            print('Word No.', y+1, ':', clueword)
+            cluewordchecker = clueword.upper()
+
+            #IF WHOLE WORD IS COMPLETE
+            if cluewordchecker == str(actualword).upper(): #and timesupna == False:
+                print('You are a rock star!')
+                score+=1
+                #print('Your current score is:', str(score), 'out of 5')
+                t.cancel()
+                break
+
+            if maxguess == 0:
+                print('Maximum number of guesses reached.')
+                if y == 4:
+                    print('Correct Answer is:', actualword)
+                    print('Your current score is:', str(score), 'out of 5')
+                t.cancel()
+                break
+            
+            print('Your number of guesses left is:', maxguess)
+
+            end_time = dt.now()
+            elapsed_time = end_time - start_time
+            #t.cancel()
+            remaining_time = remaining_time - elapsed_time.seconds
+            
+        y+=1
+
+    if score >=3:
+        print('End of Game. Your total score is', str(score), 'out of 5. You Won!')
+        print('----------------------------------------------------------')
+    else:
+        print('End of Game. Your total score is', str(score), 'out of 5. Better Luck Next Time!')
+        print('----------------------------------------------------------')
+
+    print('Do you wish to try again? Yes/No')
+    optiontoproceed = str(input()).upper()
+
+    if optiontoproceed == 'YES':
+        startnow = True
+    else:
+        #startnow = False
+        quit()
