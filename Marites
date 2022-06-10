@@ -1,0 +1,62 @@
+from ast import IsNot
+
+from numpy import integer
+
+
+print('-------------------------------------------------------------------------------------'\
+'\nMARITES?\n'\
+'-------------------------------------------------------------------------------------'\
+'\nInstructions:\n1) The group will choose a topic.\n2) Each player will contribute anything about the topic.\n\
+3) The last player to think of anything will be the loser.\n4) Only 1 player loses every game.\n5) Duplicate answer is not allowed.\
+\n- Type "end" if you wish to end the game. No one wins.\n\
+- Type "loser" if the last players answer is unacceptable, he then loses the game.')
+print('-------------------------------------------------------------------------------------')
+
+print('How many players are there?')
+qplayers = int(input())
+print('-------------------------------------------------------------------------------------')
+
+if qplayers < 0:
+    quit()
+
+print('Choose a topic:')
+topic = str(input())
+print('List down all things related to this topic.')
+answersarray = []
+
+if topic == '':
+    quit()
+    
+gogogo = True
+
+while gogogo == True:  
+    lastplayer = 0
+    x = 1
+    while x <= qplayers:
+        print('Player', x, ':')
+        ans = str(input())
+
+        if len(answersarray) > 0:
+            countanswers = len(answersarray)
+            zzz = 0
+            while zzz < countanswers:
+                if answersarray[zzz] == ans:
+                    print(ans, 'is a duplicate answer.')
+                    print('Player', x, 'lost the game.')
+                    quit()
+                zzz+=1
+        if ans == 'end':
+            quit()
+        if ans == 'loser':
+            print('Player', lastplayer, 'lost the game.')
+            quit()
+        if ans == '':
+            print('Player', x, 'lost the game.')
+            quit()
+        if ans == topic:
+            print('Player', x, 'lost the game.')
+            quit()
+
+        answersarray.append(ans)
+        lastplayer = x
+        x+=1
