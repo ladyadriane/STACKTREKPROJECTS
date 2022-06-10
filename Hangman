@@ -50,6 +50,9 @@ while startnow == True:
     elif chosencategory == 4:
         print('Chosen Category is:', categorychoices[3])
         damingoptions = len(manga) -1
+    elif chosencategory >= 5 or chosencategory <1:
+        print('Chosen category is not on the list. Bye bye.')
+        quit()  
 
     uniquenumbers = ['100']
     habangunique = 1
